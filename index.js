@@ -44,6 +44,7 @@ init.addEventListener("click", function(){
 
 // Brute forces through the tower heights and finds the available locations to install the antenna conforming to specs
 function next_antenna_locator(towerHeight, existingAntennas){
+  sortExistingAntennas(existingAntennas);
   validPoints = [];
 
   existingAntennas.forEach(function(antenna){
@@ -61,10 +62,15 @@ function next_antenna_locator(towerHeight, existingAntennas){
           }
       });
       if (validCounter === existingAntennas.length){
-        validPoints.push(nextAntennaLocation);
+        validPoints.push(parseFloat(nextAntennaLocation).toFixed(2));
       }
       validCounter = 0
       nextAntennaLocation -= 0.10
     }
     return validPoints
+  }
+
+  function sortExistingAntennas(existingAntennas){
+    existingAntennas.sort(function(a, b){return b - a});
+    return existingAntennas;
   }
