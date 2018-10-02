@@ -21,56 +21,47 @@ function addAnother(antenna){
 towerHeightSubmit.addEventListener("click", function(){
     towerHeight = Number(towerHeightText.value);
     currentTowerHeight.textContent = towerHeight.toString()
-})
+});
 
 // Submits the antenna heights and pushes them to the existingAntennas list
 submit.addEventListener("click", function(){
   numAntenna = Number(textInput.value)
   addAnother(textInput.value);
   existingAntennas.push(numAntenna);
-  console.log(typeof(numAntenna));
 });
 
 // Initiates the calculation script and creates a list of the avaliable antenna locations
 init.addEventListener("click", function(){
-    availableLocationsList = next_antenna_locator(towerHeight, existingAntennas);
-    console.log(availableLocationsList);
-    availableLocationsList.forEach(function(antenna){
-        var availableLevel = document.createElement("li");
-        availableLevel.appendChild(document.createTextNode(antenna));
-        nextLocationsList.appendChild(availableLevel);
-    });
-})
+    nextAvailable = next_antenna_locator(towerHeight, existingAntennas)[0];
+    var availableLevel = document.createElement("li");
+    availableLevel.appendChild(document.createTextNode(nextAvailable));
+    nextLocationsList.appendChild(availableLevel);
+});
 
 // Brute forces through the tower heights and finds the available locations to install the antenna conforming to specs
 function next_antenna_locator(towerHeight, existingAntennas){
   sortExistingAntennas(existingAntennas);
   validPoints = [];
+  validCounter = 0;
+  nextAntennaLocation = towerHeight - 2.6;
 
-  existingAntennas.forEach(function(antenna){
-
+  while (nextAntennaLocation > 0){
+    existingAntennas.forEach(function(antenna){
+        if (Math.abs(nextAntennaLocation - antenna) < 4){
+        } else {
+          validCounter++;
+        }
     });
-    validCounter = 0;
-    nextAntennaLocation = towerHeight - 2.6;
-
-    while (nextAntennaLocation > 0){
-      existingAntennas.forEach(function(antenna){
-          if (Math.abs(nextAntennaLocation - antenna) < 4){
-
-          } else {
-            validCounter++;
-          }
-      });
-      if (validCounter === existingAntennas.length){
-        validPoints.push(parseFloat(nextAntennaLocation).toFixed(2));
-      }
-      validCounter = 0
-      nextAntennaLocation -= 0.10
+    if (validCounter === existingAntennas.length){
+      validPoints.push(parseFloat(nextAntennaLocation).toFixed(2));
     }
-    return validPoints
+    validCounter = 0
+    nextAntennaLocation -= 0.01
   }
+  return validPoints
+}
 
-  function sortExistingAntennas(existingAntennas){
-    existingAntennas.sort(function(a, b){return b - a});
-    return existingAntennas;
-  }
+function sortExistingAntennas(existingAntennas){
+  existingAntennas.sort(function(a, b){return b - a});
+  return existingAntennas;
+}
